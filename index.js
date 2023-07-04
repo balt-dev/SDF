@@ -55,13 +55,13 @@ session.on("blur", aceCallback);
 function convertRawData(rawData) {
     try {
         if (rawData[0] !== "H") {
-            let codeAndMetadata = JSON.parse(rawData.slice(1, -1));
+            let codeAndMetadata = JSON.parse(rawData.slice(1, -1).replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'));
             rawData = codeAndMetadata.code;
         }
         let code = pako.inflate(atob(rawData), {to: "string"});
         //return code;
-        code = JSON.parse(code);
-        console.dir(code);
+        console.log(code.replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'))
+        code = JSON.parse(code.replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'));
         let blocks = code.blocks;
         let codeString = "";
         let indent = 0;
@@ -256,7 +256,6 @@ function convertCode(code) {
             finalCode.blocks.push(blockObj);
         }
     }
-    console.dir(finalCode);
     return btoa(pako.gzip(JSON.stringify(finalCode), {to: "string"}));
 }
 
@@ -277,7 +276,6 @@ function parseArgs(args, blockAction, blockType) {
     let nextEscape = false;
     for (let i = 0; i < commaSeparated.length + 1; i++) {
         let char = commaSeparated[i];
-        console.log(char, currentArg, depth);
         if (nextEscape) {
             nextEscape = false;
             if (char == null) {
@@ -512,7 +510,6 @@ function parseArgs(args, blockAction, blockType) {
                     id: "item",
                     data: {item: arg[1]}
                 }, slot: i});
-                console.log(arg[1]);
                 break;
             default:
                 console.error(`Unknown argument type "${arg[0]}"`);
@@ -553,16 +550,14 @@ function connectRecode() {
             document.getElementById("send").disabled = false;
         }
         ws.onmessage = function(e) {
-            let response = JSON.parse(e.data);
+            let response = JSON.parse(e.data.replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'));
             if (response.status != "success" && response.status != null) {
                 message.classList.remove("hidden");
                 message.textContent = `Recode returned an error! \n ${JSON.stringify(response)}`;
 				return;
             }
-            console.dir(response);
             if (response.received != null && response.type == "template") {
-            	let obj = JSON.parse(response.received);
-            	console.dir(obj);
+            	let obj = JSON.parse(response.received.replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'));
     			session.setValue(convertRawData(obj.code));
     			aceCallback();
             }
