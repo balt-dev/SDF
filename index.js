@@ -60,7 +60,6 @@ function convertRawData(rawData) {
         }
         let code = pako.inflate(atob(rawData), {to: "string"});
         //return code;
-        console.log(code.replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'))
         code = JSON.parse(code.replace(/"vol":(-?)Infinity/gm, '"vol":$1'+'1e100'));
         let blocks = code.blocks;
         let codeString = "";
