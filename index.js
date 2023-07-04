@@ -1,5 +1,15 @@
 document.getElementById("send").disabled = true;
 
+const mappingsBecauseHypercubeIsCursed = {
+    "InRange": " InRange ",
+    "Range": " Range ",
+    "TextMatches": " TextMatches ",
+}
+
+const mappingsBecauseHypercubeIsCursed2 = {
+    "IF VARIABLE;ItemEquals": "VItemEquals"
+}
+
 const BLOCK_MAP = {
     "player_action": {"name": "PLAYER ACTION", "start": false, "newline":  true},
     "if_player":     {"name": "IF PLAYER",     "start": false, "newline": false},
@@ -36,18 +46,23 @@ editor.setOptions({
     fontSize: "1em"
 });
 const session = editor.getSession();
+
+let timeoutID = null;
 // Two-way binding
 let aceCallback = () => {
-    let code = session.getValue();
-    let rawData = convertCode(code);
-    textArea.value = rawData;
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => {
+        let code = session.getValue();
+        let rawData = convertCode(code);
+        textArea.value = rawData;
+    }, 0);
 };
 textArea.addEventListener("blur", () => {
     let rawData = textArea.value;
     let code = convertRawData(rawData);
     session.setValue(code);
 });
-session.on("blur", aceCallback);
+session.on("change", aceCallback);
 
 // Now, here's the "fun" part
 
@@ -89,7 +104,7 @@ function convertBlock(block, indent) {
             }
 
             let kind = block.block;
-            let blockData = BLOCK_MAP[kind];
+            let blockData = BLOCK_MAP[kind] ?? {"name": kind.toUpperCase().replace("_", " "), "start": false, "newline": true};
             let blockName = blockData.name;
             let blockAction = block.action === "" ? "<empty>" : (block.action ?? block.data) + (block.subAction !== undefined ? `[${block.subAction}]` : "");
             blockAction = blockAction.trim();
@@ -205,10 +220,6 @@ function formatArgs(args) {
     return {args: finalArgs, tags: tags};
 }
 
-const mappingsBecauseHypercubeIsCursed = {
-    "InRange": " InRange "
-}
-
 // Convert code to raw data
 function convertCode(code) {
 
@@ -235,7 +246,8 @@ function convertCode(code) {
             let blockSubAction = blockData[4] != null ? blockData[4].trim() : blockData[4];
             let blockTarget = blockData[5] != null ? blockData[5].trim() : blockData[5];
             let blockArgs = blockData[6] != null ? blockData[6].trim() : blockData[6];
-            blockObj.block = INVERSE_MAP[blockType];
+            blockObj.block = INVERSE_MAP[blockType] ?? blockType.toLowerCase().replace(" ", "_");
+            console.log(blockObj.block);
             if (blockNegate !== undefined) {
                 blockObj.inverted = blockNegate;
             }
@@ -251,7 +263,8 @@ function convertCode(code) {
             if (blockTarget !== undefined) {
                 blockObj.target = blockTarget;
             }
-            blockObj.args.items = parseArgs(blockArgs, blockAction, INVERSE_MAP[blockType]);
+            blockAction = mappingsBecauseHypercubeIsCursed2[blockType + ";" + blockAction] ?? blockAction;
+            blockObj.args.items = parseArgs(blockArgs, blockAction, blockObj.block);
             finalCode.blocks.push(blockObj);
         }
     }
@@ -529,7 +542,7 @@ function parseArgs(args, blockAction, blockType) {
             data: {
                 tag: tag[0].trim(),
                 option: tag[1].trim(),
-                action: ["func", "process"].includes(blockType) ? "dynamic" : blockAction,
+                action: ["func", "process", "call_func", "start_process"].includes(blockType) ? "dynamic" : blockAction,
                 block: blockType
             }
         }, slot: i + (27 - rawTags.length)});
