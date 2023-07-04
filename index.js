@@ -208,6 +208,10 @@ function formatArgs(args) {
     return {args: finalArgs, tags: tags};
 }
 
+const mappingsBecauseHypercubeIsCursed = {
+    "InRange": " InRange "
+}
+
 // Convert code to raw data
 function convertCode(code) {
 
@@ -230,6 +234,7 @@ function convertCode(code) {
             let blockType = blockData[1] != null ? blockData[1].trim() : blockData[1];
             let blockNegate = blockData[2] != null ? blockData[2].trim() : blockData[2];
             let blockAction = blockData[3] != null ? blockData[3].trim() : blockData[3];
+            blockAction = mappingsBecauseHypercubeIsCursed[blockAction] ?? blockAction;
             let blockSubAction = blockData[4] != null ? blockData[4].trim() : blockData[4];
             let blockTarget = blockData[5] != null ? blockData[5].trim() : blockData[5];
             let blockArgs = blockData[6] != null ? blockData[6].trim() : blockData[6];
