@@ -227,12 +227,12 @@ function convertCode(code) {
             // Parse block
             let blockObj = {id: "block", args: {items: []}, block: ""};
             let blockData = block.matchAll(/^(.+?): (?:([^ ]+?) )?([^{]*?)(?:\[(.+?)\])?(?:<(.+)>)? (.+)$/gms).next().value;
-            let blockType = blockData[1].trim();
-            let blockNegate = blockData[2].trim();
-            let blockAction = blockData[3].trim();
-            let blockSubAction = blockData[4].trim();
-            let blockTarget = blockData[5].trim();
-            let blockArgs = blockData[6].trim();
+            let blockType = blockData[1] != null ? blockData[1].trim() : blockData[1];
+            let blockNegate = blockData[2] != null ? blockData[2].trim() : blockData[2];
+            let blockAction = blockData[3] != null ? blockData[3].trim() : blockData[3];
+            let blockSubAction = blockData[4] != null ? blockData[4].trim() : blockData[4];
+            let blockTarget = blockData[5] != null ? blockData[5].trim() : blockData[5];
+            let blockArgs = blockData[6] != null ? blockData[6].trim() : blockData[6];
             blockObj.block = INVERSE_MAP[blockType];
             if (blockNegate !== undefined) {
                 blockObj.inverted = blockNegate;
