@@ -227,18 +227,18 @@ function convertCode(code) {
             // Parse block
             let blockObj = {id: "block", args: {items: []}, block: ""};
             let blockData = block.matchAll(/^(.+?): (?:([^ ]+?) )?([^{]*?)(?:\[(.+?)\])?(?:<(.+)>)? (.+)$/gms).next().value;
-            let blockType = blockData[1];
-            let blockNegate = blockData[2];
-            let blockAction = blockData[3];
-            let blockSubAction = blockData[4];
-            let blockTarget = blockData[5];
-            let blockArgs = blockData[6];
+            let blockType = blockData[1].trim();
+            let blockNegate = blockData[2].trim();
+            let blockAction = blockData[3].trim();
+            let blockSubAction = blockData[4].trim();
+            let blockTarget = blockData[5].trim();
+            let blockArgs = blockData[6].trim();
             blockObj.block = INVERSE_MAP[blockType];
             if (blockNegate !== undefined) {
                 blockObj.inverted = blockNegate;
             }
             let sub = blockAction == "<empty>" ? "" : blockAction;
-            if (["FUNCTION", "PROCESS"].includes(blockType)) {
+            if (["FUNCTION", "PROCESS", "CALL FUNCTION", "START PROCESS"].includes(blockType)) {
                 blockObj.data = sub;
             } else {
                 blockObj.action = sub;
@@ -528,8 +528,8 @@ function parseArgs(args, blockAction, blockType) {
         items.push({item: {
             id: "bl_tag",
             data: {
-                tag: tag[0],
-                option: tag[1],
+                tag: tag[0].trim(),
+                option: tag[1].trim(),
                 action: ["func", "process"].includes(blockType) ? "dynamic" : blockAction,
                 block: blockType
             }
