@@ -42,16 +42,12 @@ let aceCallback = () => {
     let rawData = convertCode(code);
     textArea.value = rawData;
 };
-textArea.addEventListener("input", () => {
+textArea.addEventListener("blur", () => {
     let rawData = textArea.value;
     let code = convertRawData(rawData);
-    // Prevent session.setValue() from triggering "change" event
-    session.off("change", aceCallback);
     session.setValue(code);
-    session.on("change", aceCallback);
-
 });
-session.on("change", aceCallback);
+session.on("blur", aceCallback);
 
 // Now, here's the "fun" part
 
@@ -80,7 +76,9 @@ function convertRawData(rawData) {
         }
         return codeString;
     } catch (e) {
-        return `Error while decoding data: ${e}`;
+        message.classList.remove("hidden");
+        message.textContent = `Failed to parse the code! \n ${e}`;
+        return null;
     }
 }
 
@@ -556,10 +554,17 @@ function connectRecode() {
         }
         ws.onmessage = function(e) {
             let response = JSON.parse(e.data);
-            if (response.status != "success") {
+            if (response.status != "success" && response.status != null) {
                 message.classList.remove("hidden");
                 message.textContent = `Recode returned an error! \n ${JSON.stringify(response)}`;
-
+				return;
+            }
+            console.dir(response);
+            if (response.received != null && response.type == "template") {
+            	let obj = JSON.parse(response.received);
+            	console.dir(obj);
+    			session.setValue(convertRawData(obj.code));
+    			aceCallback();
             }
         }
     } catch (e) {
