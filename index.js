@@ -95,6 +95,7 @@ function convertBlock(block, indent) {
             let blockData = BLOCK_MAP[kind];
             let blockName = blockData.name;
             let blockAction = block.action === "" ? "<empty>" : (block.action ?? block.data) + (block.subAction !== undefined ? `[${block.subAction}]` : "");
+            blockAction = blockAction.trim();
             
             let fullString = blockName + ": ";
             if (block.inverted !== undefined) {
