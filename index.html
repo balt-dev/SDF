@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDF</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.1/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/0.2.4/pako.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="input">
+            <div class="buttons">
+                <button id="send" onclick="sendToRecode()" disabled>Send to Recode</button>
+                <button id="connect" onclick="connectRecode()">
+                    <img src="connect.svg" alt="Connect"/>
+                </button>
+            </div>
+            <div class="message hidden" onclick="closeMessage()">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus repellendus placeat libero asperiores sed, fuga consequuntur repellat tempora dolore iusto, consequatur quod officia adipisci ad praesentium error rem! Explicabo, fuga!
+            </div>
+            <textarea id="data" placeholder="Paste either code template data or its NBT tag here.&#10;&#10;Example:&#10;- Raw Data&#10;H4sIAAAAAAAAA12NsQ7CMAxEfwXd3ImBIR+A6M6GEDKJ20akMWrCgKr8Ow4pC5vvvZNvxT2IfSSYywrvYFpGB1pGpQozz5vW60ta7ZZp1J6jTJXWZNCn3ck7x1GNPLOXqPBIIXF9aTfg3pFmbxW1NYPhFS1K6ZCCZJj9oVzLn/1NYeIQ5DzxwtDWB9hpkCfCAAAA&#10;- NBT&#10;'{&quot;author&quot;:&quot;Heptor&quot;,&quot;name&quot;:&quot;§a§lProcess §2» §ageneralKenobi&quot;,&quot;version&quot;:1,&quot;code&quot;:&quot;H4sIAAAAAAAA/22NMQ7CMAxFr4I8d2JgyAEQiCMghNzYiiLSuIqzoCp3x6FhY7L93//fG8xJ/EvB3TeIBG6/YRrTwVrEs6opWIL5zFZ5GQHbvsoefFYM5iOs2FVZa5Rs5IxJ2UDHDq56uEQizr3SDwu9My7R//nb2gSapII7ntqj/eohcOaC6cZZ5ghGPu4Awc3LAAAA&quot;}'"></textarea>
+        </div>
+        <div id="code"></div>
+    </div>   
+    <script src="index.js"></script>
+</body>
+</html>
